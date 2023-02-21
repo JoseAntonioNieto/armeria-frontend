@@ -1,4 +1,6 @@
 <script>
+    import "bootstrap/dist/css/bootstrap.min.css";
+    import "bootstrap/dist/js/bootstrap.min.js";
 	import { setContext} from "svelte";
     import { Router} from "svelte-routing";
     import Nav from "./Nav.svelte";
