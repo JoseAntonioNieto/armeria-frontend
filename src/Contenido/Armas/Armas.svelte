@@ -3,9 +3,10 @@ import { getContext} from "svelte";
 import { data } from "../../store.js";
 import { onMount} from "svelte";
 import Buscador from "../Buscador.svelte";
+import Arma from "./Arma.svelte";
+import Botones from "../Botones.svelte";
 
-
-
+let armaInsert = {};
 let datosFiltrados = {}
 let busqueda = "";
 const URL = getContext("URL");
@@ -18,19 +19,24 @@ onMount(getArmas);
 
 $: datosFiltrados = $data.filter( arma => RegExp(busqueda, "i").test(arma.nombre));
 </script>
-<Buscador bind:busqueda/>
+<p>Buscar: <Buscador bind:busqueda/></p>
 
 <div class="container">
+    <div class="row">
+        <div class="col bg-danger py-3">
+            <h2>Insertar</h2>
+            <Arma bind:arma={armaInsert}/>
+            <Botones tipo="insertar"/>
+        </div>
+    </div>
     <div class="row">
         {#each datosFiltrados as arma }
             <div class="col-md-4">
                 <div class="card mt-3">
                     <div class="card-body">
-                        <h5 class="card-title">{arma.nombre}</h5>
-                        <p class="card-text">Balas cargador: {arma.balasCargador}</p>
-                        <p class="card-text">Tipo de arma: {arma.tipo}</p>
-                        <p class="card-text">Cantidad en stock: {arma.stock}</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                        <Arma bind:arma/>
+                        <Botones tipo="actualizar" />
+                        <Botones tipo="eliminar" documento="{arma}" url="{URL.armas}"/>
                     </div>
                 </div>
             </div>
