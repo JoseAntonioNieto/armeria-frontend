@@ -1,5 +1,6 @@
 <script>
     import { onMount} from "svelte";
+    import {data} from "../store.js";
 
     export let tipo;
 
@@ -10,11 +11,25 @@
     let handler = () => {}
 
     function insertar() {
-        console.log("Insertar");
+        const opciones = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(documento)
+        }
+
+        console.log(url)
+
+        fetch(url, opciones).then(data => console.log(data)).catch()
     }
 
     function actualizar() {
-        console.log("Actualizar");
+        let opciones = {
+            method: "PUT",
+            headers: { "Content-Type": "application/json"},
+            body: JSON.stringify(documento)
+        }
+
+        fetch(`${url}/${documento._id}`, opciones).then(data => console.log(data)).catch();
     }
 
     function eliminar() {

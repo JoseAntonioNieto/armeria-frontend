@@ -26,7 +26,7 @@ $: datosFiltrados = $data.filter( arma => RegExp(busqueda, "i").test(arma.nombre
         <div class="col bg-danger py-3">
             <h2>Insertar</h2>
             <Arma bind:arma={armaInsert}/>
-            <Botones tipo="insertar"/>
+            <Botones tipo="insertar" documento="{armaInsert}" url="{URL.armas}"/>
         </div>
     </div>
     <div class="row">
@@ -35,7 +35,7 @@ $: datosFiltrados = $data.filter( arma => RegExp(busqueda, "i").test(arma.nombre
                 <div class="card mt-3">
                     <div class="card-body">
                         <Arma bind:arma/>
-                        <Botones tipo="actualizar" />
+                        <Botones tipo="actualizar" documento="{arma}" url="{URL.armas}"/>
                         <Botones tipo="eliminar" documento="{arma}" url="{URL.armas}"/>
                     </div>
                 </div>
