@@ -8,7 +8,7 @@
 
     const URL = {
         armas: "https://apiarmeria.onrender.com/api/armeria/armas",
-        clientes: "https://apiarmeria.onrender.com/api/armeria/clientes/"
+        clientes: "https://apiarmeria.onrender.com/api/armeria/clientes"
     }
 
     setContext("URL", URL);
