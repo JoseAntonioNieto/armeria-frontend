@@ -17,9 +17,8 @@
             body: JSON.stringify(documento)
         }
 
-        console.log(url)
-
-        fetch(url, opciones).then(data => console.log(data)).catch()
+        fetch(url, opciones).then(res => res.json())
+            .then(doc => $data = [...$data, doc]).catch();
     }
 
     function actualizar() {
@@ -29,7 +28,9 @@
             body: JSON.stringify(documento)
         }
 
-        fetch(`${url}/${documento._id}`, opciones).then(data => console.log(data)).catch();
+        fetch(`${url}/${documento._id}`, opciones).then(res => res.json())
+            .then(doc => console.log(doc))
+            .catch();
     }
 
     function eliminar() {
@@ -38,7 +39,10 @@
             headers: { "Content-Type": "application/json" }
         }
 
-        fetch(`${url}/${documento._id}`, opciones).then(data => console.log(data)).catch();
+        fetch(`${url}/${documento._id}`, opciones)
+            .then(res => res.json())
+            .then($data = $data.filter(doc => doc._id != documento._id))
+            .catch();
         console.log("Eliminar");
     }
 
