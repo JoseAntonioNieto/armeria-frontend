@@ -133,7 +133,7 @@ const URL = {
     setContext("URL", URL);
 ```
 Indicamos las secciones de la web, que se correspondera a diferentes archivos de svelte
-```html
+```sveltehtml
 <Router>
     <Nav/>
     <Contenido/>
@@ -147,7 +147,7 @@ Importamos link al arhivo
 import { Link } from "svelte-routing";
 ```
 Las etiquetas a las sustituimos por la siguiente etiqueta html
-```html
+```sveltehtml
 <Link to="/" class="nav-link text-light">Inicio</Link>
 ```
 # Contenido.svelte
@@ -158,7 +158,7 @@ Importamos routes al archivo
 import { Route } from "svelte-routing";
 ```
 Con la etiqueta route establecemos el contenido que se mostrara al usar los links establecidos en Nav.svelte indicando en component el archivo svelte al que corresponde y en path el link al que corresponde
-```html
+```sveltehtml
 <Route path="/" component="{Inicio}"></Route>
 ```
 # store.js
@@ -238,7 +238,7 @@ function onSetup() {
     onMount(onSetup);
 ```
 El boton html queda de la siguiente forma
-```html
+```sveltehtml
 <input type="button" value="{tipo.toUpperCase()}" on:click={handler} class="btn btn-primary">
 ```
 # Busqueda.svelte
@@ -249,7 +249,7 @@ Exportamos la variable de busqueda
 export let busqueda = "";
 ```
 Cremos la etiqueta html de busqueda
-```html
+```sveltehtml
 <input type="search" bind:value="{busqueda}"/>
 ```
 # Arma/Cliente.svelte
@@ -260,9 +260,79 @@ Exportamos el documento correspondiente al formulario
 export let arma;
 ```
 Creamos las etiquetas html
-```html
+```sveltehtml
 <h5 class="card-title"><input type="text" bind:value={arma.nombre}/></h5>
 <p class="card-text">Balas cargador: <input type="number" bind:value={arma.balasCargador}/></p>
 <p class="card-text">Tipo de arma: <input type="text" bind:value={arma.tipo}/></p>
 <p class="card-text">Cantidad en stock: <input type="number" bind:value={arma.stock}/></p>
 ```
+# Armas/Clientes.svelte
+
+---
+Realizamos las importaciones del contexto para obtener el enlace de la api, data para almacenar los documentos y onMount para iniciar una funcion al cargar.
+
+```js
+import { getContext} from "svelte";
+import { data } from "../../store.js";
+import { onMount} from "svelte";
+```
+
+Despues de esto creamos 3 variables, que son un objeto para la insercion, otro para los datos recuperados de la api y una cadena para la busqueda.  
+Y tambien una constante donde guardaremos la URL que tenemos en el contexto.
+```js
+let armaInsert = {};
+let datosFiltrados = {}
+let busqueda = "";
+const URL = getContext("URL");
+```
+
+Para obtener las armas cuando entremos a la pagina creamos una funcion que realiza un fetch a la api y guarda los datos en data y con onMount le decimos que quremos que se ejecute cuando lo iniciemos el componente.
+```js
+async function getArmas() {
+    const response = await fetch(URL.armas);
+    $data = await response.json();
+}
+onMount(getArmas);
+```
+
+Para poder realizar la busqueda, hemos insertado en datosFiltrados todos los objetos de data que correspondan con la cadena de busqueda.
+```js
+$: datosFiltrados = $data.filter( arma => RegExp(busqueda, "i").test(arma.nombre));
+```
+
+Para poder realizar la busqueda usamo el componente de busqueda y con bind y el nombre de la cadena especificamos que la variable busqueda del componente de busqueda corresponde al del componente en el que se usa.
+```sveltehtml
+<p>Buscar: <Buscador bind:busqueda/></p>
+```
+
+Para insertar, primero llamamos al formulario del objeto y especificamos con bind que, en este caso, armaInsertar de este componente corresponde a la varible exportada arma del componente Arma y para realizar la operacion llamamos al componente botones, al que le indicamos usando sus varibles exportadas el tipo de boton, el documento que usar y la url en la que actuar.
+```sveltehtml
+<Arma bind:arma={armaInsert}/>
+<Botones tipo="insertar" documento="{armaInsert}" url="{URL.armas}"/>
+```
+
+Por ultimo mostramos los datos, haciendo uso de un each, que se encuentran en datosFiltrados donde estan todos los documentos si no indicamos nada y los documentos filtrados si hacemos uso de la busqueda.  
+Cuando ya tenemos el documento por separado creamos el formulario asociado a ese documento indicando que el documento exportado de, en este caso, arma corresponde al arma obtenida del each de nuestro componente, por ultimo creamos los botones de actualizar y eliminar como lo hicimos en el anterior pero cambiando el tipo e indicando que el documento es el arma del each.
+```sveltehtml
+{#each datosFiltrados as arma }
+            <div class="col-md-4">
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <Arma bind:arma/>
+                        <Botones tipo="actualizar" documento="{arma}" url="{URL.armas}"/>
+                        <Botones tipo="eliminar" documento="{arma}" url="{URL.armas}"/>
+                    </div>
+                </div>
+            </div>
+        {/each}
+```
+
+# Resultado final
+
+---
+Inicio  
+![img_1.png](img_1.png)  
+Armas  
+![img.png](img.png)  
+Clientes  
+![img_2.png](img_2.png)
